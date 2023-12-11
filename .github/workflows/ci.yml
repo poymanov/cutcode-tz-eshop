@@ -73,7 +73,7 @@ jobs:
           MYSQL_PASSWORD: db
           MYSQL_DATABASE: db
         ports:
-          - 3306:3306
+          - 3306
 
     steps:
       - name: Checkout code

@@ -1,0 +1,68 @@
+version: '3'
+services:
+    nginx:
+        build:
+            context: ./docker/nginx
+            args:
+                WWWGROUP: '${WWWGROUP:-1000}'
+                WWWUSER: '${WWWUSER:-1000}'
+        volumes:
+            - .:/app
+        depends_on:
+            - php-fpm
+        ports:
+            - "8080:80"
+    php-fpm:
+        build:
+            context: ./docker/php
+            dockerfile: php-fpm.docker
+            args:
+                WWWGROUP: '${WWWGROUP:-1000}'
+                WWWUSER: '${WWWUSER:-1000}'
+        environment:
+            PHP_IDE_CONFIG: serverName=cutcode-tz-eshop
+        volumes:
+            - .:/app
+        depends_on:
+            - db
+    php-cli:
+        build:
+            context: ./docker/php
+            dockerfile: php-cli.docker
+            args:
+                WWWGROUP: '${WWWGROUP:-1000}'
+                WWWUSER: '${WWWUSER:-1000}'
+        volumes:
+            - .:/app
+        depends_on:
+            - db
+    db:
+        image: mysql:8
+        volumes:
+            - db:/var/lib/mysql
+            - ./docker/mysql/scripts:/home/scripts
+        environment:
+            MYSQL_ROOT_PASSWORD: "secret"
+        ports:
+            - "3306:3306"
+    redis:
+        image: redis:7
+    node-watch:
+        build:
+            context: ./docker/node
+        volumes:
+            - .:/app
+        ports:
+            - "5173:5173"
+        command: sh -c "until [ -f .ready ] ; do sleep 1 ; done && npm run dev -- --host"
+    node-cli:
+        build:
+            context: ./docker/node
+        volumes:
+            - .:/app
+    mailhog:
+        image: 'mailhog/mailhog:latest'
+        ports:
+            - "8025:8025"
+volumes:
+    db:

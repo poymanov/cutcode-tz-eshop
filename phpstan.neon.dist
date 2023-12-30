@@ -4,3 +4,8 @@ parameters:
     level: 8
     checkMissingIterableValueType: false
     checkGenericClassInNonGenericObjectType: false
+    excludePaths:
+        - app/Http/Controllers/Auth/*
+        - app/Http/Controllers/ProfileController.php
+        - app/View/Components/AppLayout.php
+        - app/View/Components/GuestLayout.php

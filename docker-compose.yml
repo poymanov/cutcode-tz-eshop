@@ -54,6 +54,7 @@ services:
             - .:/app
         ports:
             - "5173:5173"
+            - "3000:3000"
         command: sh -c "until [ -f .ready ] ; do sleep 1 ; done && npm run dev -- --host"
     node-cli:
         build:
